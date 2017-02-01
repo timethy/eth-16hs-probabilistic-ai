@@ -108,7 +108,7 @@
 		\textbf{Bayesian network $(G,P)$:} directed, acyclic graph and a set of conditional probability distributions (CPTs) $P(X_s| Pa_{X_{s}})$
 		
 		 $(G,P)$ defines the joint distribution $\mathrm {P} (X_{1:n}) = \prod_{i} P(X_i| Pa_{X_{i}})$  
-		\includegraphics[width=0.3\textwidth]{img/pai1.png}
+		\includegraphics[height=2cm]{img/pai1.png}
 		 
 		\textbf{Specifying a BN}
 		\begin{compactitem}
@@ -171,7 +171,7 @@
 	
 	\textbf{Factor Graphs}
 	A factor graph for a BN is a bipartite graph with variables on one side and  factors on the other.
-	\includegraphics[width=0.3\textwidth]{img/pai2.png}
+	\includegraphics[height=2cm]{img/pai2.png}
 	
 	\textbf{Sum-Product / Belief Propagation Algorithm}	
 	
@@ -313,7 +313,7 @@ Satisfies detailed balance equation!
 \end{compactitem}
 No detailed balance, but also has correct stationary distribution.
 
-\includegraphics[width=0.3\textwidth]{img/pai3.png}
+\includegraphics[height=2.5cm]{img/pai3.png}
 
 \subsection{Temporal models}
 
@@ -333,7 +333,7 @@ $P(X_4 | X_1 = x) = \sum_{X_3}P(X_4,X_3|X_1 = x) = \sum_{X_3}P(X_4 | X_3)P(X_3 |
 
 \textbf{Hidden Markov Model/ Kalman Filters}
 
-\includegraphics[width=0.3\textwidth]{img/pai4.png}
+\includegraphics[height=1cm]{img/pai4.png}
 $X_1,...,X_T$: Unobserved (hidden) variables (called states) \\
 $Y_1,...,Y_T$: Observations \\
 HMMs: $X_i$ categorical, $Y_i$ categorical (or arbitrary)\\
@@ -413,7 +413,7 @@ Can compute $V\pi$ exactly by solving linear system!
 \textbf{Value functions and policies}
 
 
-\includegraphics[width=0.3\textwidth]{img/pai5.png}
+\includegraphics[height=3.5cm]{img/pai5.png}
 
 \textbf{Policy iteration}
 \begin{compactitem}
