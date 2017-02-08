@@ -10,11 +10,12 @@
 \usepackage{hyperref} % for Todo's and similar things
 \usepackage[left=4.5mm, right=4.5mm, top=4.5mm, bottom=6mm, landscape, nohead, nofoot]{geometry}
 \usepackage[small,compact]{titlesec}
+\usepackage[extreme]{savetrees}
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage{xparse}
 \usepackage{graphicx}
 \usepackage{cancel}
-\usepackage{ dsfont }
+\usepackage{dsfont}
 
 % reinstate the Computer Modern calligraphic letters
 \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
@@ -41,7 +42,6 @@
 {\colorsection}
 \newcommand{\colorsection}[1]{%
 	\colorbox{green!10}{\parbox[t][0em]{\dimexpr\columnwidth-2\fboxsep}{\thesection\ #1}}}
-
 
 \titleformat{name=\subsection}[block]
 {\sffamily}
@@ -83,8 +83,7 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
 
-
-
+\newcommand{\uP}{\mathrm P}
 
 \begin{document}
 	\begin{multicols*}{3}
@@ -92,20 +91,19 @@
 		\defaultleftmargin{}{}{}{} 
 		\section{Probabilities}
 		\begin{compactitem}[]
-			\item[] Bayes: $P(A\mid B) \; = \; \frac {P(B\mid A) \cdot P(A)} {P(B)}$
-			\item[] $P(A|B)={\frac {P(A\cap B)}{P(B)}}$
-			\item[] $P(A\cap B)=P(A|B)P(B)$
-			\item[] $P(A\cup B)=P(A)+P(B)-{{P(A\cap B)}}$
-			\item[] Chain rule:  $\mathrm {P} (X_{1},\ldots ,X_{n})=\mathrm {P} (X_{1})\cdot\mathrm{P} (X_{2}| X_{1})\cdot\mathrm{P} (X_{3}| X_{1}, X_{2}) \cdot \ldots \cdot  \mathrm {P} (X_{n} | X_{1},\ldots ,X_{n-1})$
-			\item[] Marginalization: $ \Pr(X=x)=\sum _{y}\Pr(X=x,Y=y)=\sum _{y}\Pr(X=x\mid Y=y)\Pr(Y=y)$
-			\item[] Conditional independence: $X$ \& $Y$ are c. ind. given $Z$: $P(X, Y| Z) = P(X|Z) P(Y|Z)$ if $P(Y|Z) > 0$ that is equivalent to $P(X|Z,Y) = P (X | Z)$
+			\item[] Bayes: $\uP(A\mid B) \; = \; \frac {\uP(B\mid A) \cdot \uP(A)} {\uP(B)} = \frac{\uP(A\cap B)}{\uP(B)}$
+			\item[] $\uP(A\cap B) = \uP(A|B)\uP(B) = \uP(B|A)\uP(A)$
+			\item[] $\uP(A\cup B)=\uP(A)+\uP(B)-{{\uP(A\cap B)}}$
+			\item[] Chain rule $\uP (X_{1},.,X_{n})=\uP(X_{1})\,\uP(X_{2}| X_{1})\,\uP(X_{3}| X_{1},X_{2}) \cdots \uP(X_{n} | X_{1},.,X_{n-1})$
+			\item[] Marginalization: $ \uP(X=x)=\sum _{y}\uP(X=x,Y=y)=\sum _{y}\uP(X=x\mid Y=y)\uP(Y=y)$
+			\item[] Conditional independence: $X$ \& $Y$ are c.\ ind.\ given $Z$: $\uP(X, Y| Z) = \uP(X|Z) \uP(Y|Z)$ if $\uP(Y|Z) > 0$ that is equivalent to $\uP(X|Z,Y) = \uP(X | Z)$
 		\end{compactitem}
 	
 	
 		\section{Bayes Network}
 		\textbf{Naive Bayes approach:} Effects are conditionally independent given a cause.
 		
-		\textbf{Bayesian network $(G,P)$:} directed, acyclic graph and a set of conditional probability distributions (CPTs) $P(X_s| Pa_{X_{s}})$
+		\textbf{Bayesian network $(G,P)$:} directed, acyclic graph and a set of conditional probability distributions (CPTs) $\uP(X_s| Pa_{X_{s}})$
 		
 		 $(G,P)$ defines the joint distribution $\mathrm {P} (X_{1:n}) = \prod_{i} P(X_i| Pa_{X_{i}})$  
 		\includegraphics[height=2cm]{img/pai1.png}
@@ -213,7 +211,7 @@
   	\item Collect and multiply all factors $f_j$ that include $X_i$   
   	\item Generate new factor by maximizing out $X_i$
   	
-	$g_i = max_{x_i} \prod_{j} f_j$
+	$g_i = \max_{x_i} \prod_{j} f_j$
   	\item Add $g$ to set of factors
   	\end{compactenum}
 	\item For $i=n:-1:1, X_i \notin  E$:  $\hat{x_i} = \argmax_{x_i} g_i(x_i, \hat{x}_{i+1:n})$
@@ -240,11 +238,11 @@ $\mu_{v \rightarrow u} = \prod_{u' \in N(v) \setminus \{u\}} \mu_{u' \rightarrow
 
 Messages from factor u to variable v:
 
-$\mu_{u \rightarrow v} = max_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu_{v' \rightarrow u}(x_{v'})$ 
+$\mu_{u \rightarrow v} = \max_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu_{v' \rightarrow u}(x_{v'})$ 
  
  \textbf{Retrieving MAP From Max-Product}
  \begin{compactitem}
- \item Define max-marginals: $P_{max}(X_v =x_v)=max_{x \sim x_v} P(x)$
+ \item Define max-marginals: $P_{max}(X_v =x_v) = \max_{x \sim x_v} P(x)$
  \item For tree factor graphs, max-product computes max-marginals: 
  $P_{max}(X_v = x_v) \propto \prod_{u \in N(v)} \mu_{u \rightarrow v} (x_v)$ 
 \item Can retrieve MAP solution from these (must be careful when ties need to be broken)
@@ -343,7 +341,7 @@ Kalman Filters: $X_i, Y_i$ Gaussian distributions
 
 Filtering: $P(X_t | y_{1:t} ) $\\
 Prediction: $P(X_{t+T} | y_{1:t} )$ \\
-Smoothing: $P(X_t | y_{1:T}) for 1\leq t < T$\\
+Smoothing: $P(X_t | y_{1:T}) \text{ for } 1\leq t < T$\\
 MPE: $\argmax_{X_{1:T}} P(X_{1:T} | y_{1:T})$
  
 In principle, can use variable elimination / belief propagation with new variables Xt, Yt at
@@ -428,10 +426,10 @@ Guaranteed to monotonically improve \& converge to an optimal policy.
 
 \textbf{Value iteration}
 \begin{compactitem}
-\item Initialize $V_0(x) = max_a r(x, a)$
+\item Initialize $V_0(x) = \max_a r(x, a)$
 \item For $t=1$ to $\infty$ 
 \item For each $x, a$, let $Q^t(x,a) = r(x, a) + \gamma \sum_{x'} P(x' | x, a) V^{t-1}(x'))$
-\item For each x let $V^t(x) = max_a Q^t(x,a)$
+\item For each x let $V^t(x) = \max_a Q^t(x,a)$
 \item Break if $max_x V^t(x) - V^{t-1}(x) < \epsilon$
 \item Then choose greedy policy w.r.t. $V_t$
 \end{compactitem}
@@ -466,18 +464,18 @@ Score based structure learning: scoring function S(G;D). Quantifies, for each st
 
 $G^* = \argmax_G S(G;D)$
 
-Again use MLE: $S(G;D) = max_\theta log P(D | \theta, G)$
-$log P(D | \theta_{G (MLE for G)}) = N \sum_{i=1}^{n} \hat{I}(X_i ; Pa_i) + const$
+Again use MLE: $S(G;D) = \max_\theta \log P(D | \theta, G)$
+$\log P(D | \theta_{G (MLE for G)}) = N \sum_{i=1}^{n} \hat{I}(X_i ; Pa_i) + const$
 
-Mutual Information: $I(X_i; X_j) = \sum_{x_i, x_j} P(x_i, x_j) log \frac{P(x_i, x_j)}{P(x_i) P(x_j)}$
+Mutual Information: $I(X_i; X_j) = \sum_{x_i, x_j} P(x_i, x_j) \log \frac{P(x_i, x_j)}{P(x_i) P(x_j)}$
 Empirical MI: 
 
-$\hat{P}(x_i, x_j) = \frac{Count(x_i, x_j)}{N}; \hat{I} = \sum_{x_i, x_j} \hat{P}(x_i, x_j) log \frac{\hat{P}(x_i, x_j)}{\hat{P}(x_i) \hat{P}(x_j)}$
+$\hat{P}(x_i, x_j) = \frac{Count(x_i, x_j)}{N}; \hat{I} = \sum_{x_i, x_j} \hat{P}(x_i, x_j) \log \frac{\hat{P}(x_i, x_j)}{\hat{P}(x_i) \hat{P}(x_j)}$
 
 Problem: Optimal solution for MLE is always the fully  connected graph. 
 
 \textbf{Bayesian Information Criterion (BIC)}
-(Regularizing) $S_{BIC}(G) = \sum_{i=1}^{n} \hat{I}(X_i ; Pa_i) - \frac{log N}{2N} |G|$ where $|G|$ is \# of parameters of G, n is \# of variables, N is \# of training examples
+(Regularizing) $S_{BIC}(G) = \sum_{i=1}^{n} \hat{I}(X_i ; Pa_i) - \frac{\log N}{2N} |G|$ where $|G|$ is \# of parameters of G, n is \# of variables, N is \# of training examples
 
 Haha this is now NP hard but find optimal tree-shaped BN is possible
 
@@ -534,7 +532,7 @@ Depends heavily on state space $O(|x|^3)$
 Estimate the value function directly.
 
 \textbf{Q-Learning}
-$Q(x, a) = r(x, a) + \gamma \cdot max_{a'} (Q(x', a'))$ where $\gamma$ is discount factor. $\pi(x) = \argmax_a Q(x, a )$
+$Q(x, a) = r(x, a) + \gamma \cdot \max_{a'} (Q(x', a'))$ where $\gamma$ is discount factor. $\pi(x) = \argmax_a Q(x, a )$
 
 Learning Algorithm:
 \begin{compactitem}
@@ -543,7 +541,7 @@ Learning Algorithm:
 	\item Do until end state reached:
 	\item Select $a$ (with $(1-\alpha)$ random possible a or $\alpha$ best possible $a$) \& receive rewards $r(x, a)$
 	\item Observe new state $x'$
-	\item Update Q matrix: $Q(x, a) = r(x, a) + \gamma \cdot max_{a'} (Q(x', a'))$
+	\item Update Q matrix: $Q(x, a) = r(x, a) + \gamma \cdot \max_{a'} (Q(x', a'))$
 	\item $x = x'$
 \end{compactitem}
 
@@ -563,6 +561,6 @@ Can use Monte Carlo Estimate as surrogate for $V^\pi(s_t)$
 \textbf{Policy Gradient Method}
 Learning a parameterized policy without the detour of learning a value function: $\pi(b) = \pi(b;\theta)$ \& again GD
 
-
 \end{multicols*}
 \end{document}
+
