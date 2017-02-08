@@ -182,11 +182,11 @@
 			
 			Messages from variable v to factor u: 
 			
-			$\mu_{v \rightarrow u} = \prod_{u' \in N(v) \setminus \{u\}} \mu_{u' \rightarrow v}(x_{v})$ 
+			$\mu_{v \rightarrow u}(x_v) = \prod_{u' \in N(v) \setminus \{u\}} \mu_{u' \rightarrow v}(x_{v})$ 
 			
 			Messages from factor u to variable v:
 			
-			$\mu_{u \rightarrow v} = \sum_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu_{v' \rightarrow u}(x_{v'})$ 
+			$\mu_{u \rightarrow v}(x_v) = \sum_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu_{v' \rightarrow u}(x_{v'})$ 
 
 			\item Break once all messages change by at most $\epsilon$
 		\end{compactenum}
@@ -374,7 +374,7 @@ If we have more than one variable at each time step
 
 \textbf{Particle filtering}
 Approximate the posterior at each time by samples (particles), which are propagated and reweighted over time.
-True distribution (possibly continuous): $P(x)$, $N$ i.i.d. samples: $x_1,..x_N$; Represent: $P(x) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i}(x)$
+True distribution (possibly continuous): $P(x)$, $N$ i.i.d. samples: $x_1,..x_N$; Represent: $P(x) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i}(x)$. E.g. $\delta_{x_i}(x):= x_i == x$
 
 \begin{compactitem}
 	\item Suppose $P(X_t | y_{1:t}) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i, t}$
@@ -391,8 +391,8 @@ How should we control the robot to maximize reward?
 \begin{compactitem}
 	\item A set of states $X={1,...,n}$
 	\item A set of actions $A={1,...,m}$
-	\item Transition probabilities $P(x’ | x, a)$ = Prob(Next state = $x’ |$ Action $a$ in state $x$)
-	\item A reward function r(x, a)
+	\item Transition probabilities $P(x' | x, a)$ = Prob(Next state = $x' |$ Action $a$ in state $x$)
+	\item A reward function r(x, a, x')
 	
 	Modes: Finite horizon ($T timesteps$) or Discounted rewards (inf timesteps but discount future rewards)
 \end{compactitem}
@@ -456,7 +456,7 @@ $P(X_1, ..., X_N) = \prod_{i=1}^{n} P(X_i | Pa_i, {\theta}_{i | Pa_i})$
 Given:  BN structure $G$ \& Data set $D$ of complete observations
 For each variable $X_i$ estimate: $\hat{\theta}_{X_i | Pa_i} = \frac{Count(X_i , Pa_i)}{Count(Pa_i)}$ (MLE)
 
-We can also use a Beta prior. (A priori knowledge)
+We can also use a Beta prior (A priori knowledge).
 
 \subsection{Structure learning}
 
@@ -519,11 +519,15 @@ With probability  $\epsilon_t$: Pick random action; With probability $(1- \epsil
 
 \textbf{$R_{max}$ Algorithm}
 
-If you don’t know $r(x, a)$ : set it to $R_{max}$
+Init:
 
-If you don’t know $P(x' | x, a)$: set $P(x^* | x, a) = 1$ where $x^*$ is a “fairy tale” state: $r(x^*, a) = r_{max}  \forall a$ and $P(x_{t+1} | x^*, a) = 1  \forall a$  
+$r(x, a)$ = $R_{max}$
+$P(x^* | x, a) = 1$ where $x^*$ is a “fairy tale” state: $r(x^*, a) = r_{max}  \forall a$
+Choose optimal $\pi$ according to $r$,$P$
 
-If observed "enough" transitions / rewards, recompute policy   according to current model P and r
+Repeat:
+Execute $Pi$. $\forall(x,a)\in visited$. update $r(x,a)$. Estimate $P(x'|x,a)$.
+After "enough" rewards, recompute $\pi$ according to $r$,$P$.
 
 Depends heavily on state space $O(|x|^3)$
 
@@ -532,16 +536,16 @@ Depends heavily on state space $O(|x|^3)$
 Estimate the value function directly.
 
 \textbf{Q-Learning}
-$Q(x, a) = r(x, a) + \gamma \cdot \max_{a'} (Q(x', a'))$ where $\gamma$ is discount factor. $\pi(x) = \argmax_a Q(x, a )$
+$Q^*(x, a) = r(x, a) + \gamma \cdot \max_{a'} (Q^*(x', a'))$ where $\gamma$ is discount factor. $\pi(x) = \argmax_a Q(x, a )$
 
 Learning Algorithm:
 \begin{compactitem}
 	\item Init Q matrix to zero
 	\item Select / Observe init state x
 	\item Do until end state reached:
-	\item Select $a$ (with $(1-\alpha)$ random possible a or $\alpha$ best possible $a$) \& receive rewards $r(x, a)$
-	\item Observe new state $x'$
-	\item Update Q matrix: $Q(x, a) = r(x, a) + \gamma \cdot \max_{a'} (Q(x', a'))$
+	\item Select $a$ according to policy (i.e. $\epsilon$-greedy)
+	\item Observe new state $x'$ and $r(x,a,x')$
+	\item $Q(x, a) \leftarrow (1-\alpha_t)Q(x, a)  + \alpha_t(r(x,a,x') + \gamma max_{a'}Q(x',a'))$
 	\item $x = x'$
 \end{compactitem}
 
