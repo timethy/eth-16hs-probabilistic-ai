@@ -1,6 +1,9 @@
-\documentclass[a4paper, 11pt, landscape]{article}
+\documentclass[a4paper, 11pt]{scrartcl}
 
 \usepackage{mathptmx} % more compact font
+\usepackage[utf8]{inputenc}
+
+\usepackage[english]{babel}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{mathtools}
@@ -19,8 +22,13 @@
 
 % reinstate the Computer Modern calligraphic letters
 \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
-% change font
-%\renewcommand{\familydefault}{\sfdefault}
+
+\setkomafont{section}{}
+\setkomafont{subsection}{}
+\setkomafont{subsubsection}{}
+\setkomafont{paragraph}{\bfseries}
+\setkomafont{subparagraph}{\mdseries}
+\renewcommand{\familydefault}{\rmdefault}
 
 % compact text
 \linespread{0.9}
@@ -33,6 +41,8 @@
 \titlespacing*{\section}{0pt}{0em}{0em}
 \titlespacing*{\subsection}{0pt}{0em}{0em}
 \titlespacing*{\subsubsection}{0pt}{0em}{0em}
+\titlespacing*{\paragraph}{0pt}{0em}{5pt}
+\titlespacing*{\subparagraph}{0pt}{0em}{4pt}
 
 % coloured section headings for easier read
 \titleformat{name=\section}[block]
@@ -73,7 +83,7 @@
 }
 
 % multicols lines & spacing
-\setlength{\columnsep}{0.2cm}
+\setlength{\columnsep}{2mm}
 \setlength{\columnseprule}{0.2pt}
 
 % No page numbers
@@ -261,7 +271,7 @@ Loopy belief propagation will in general not converge	$\rightarrow$ Sampling Bas
 
 Marginals: $P(w=t) \approx \frac{1}{N} \sum_{i=1}^{N}[w=t](x^{(i)} =\frac{ Count(w=t)}{N}$
 
-Conditionals: $P(C=t | W=t) = \frac{P(C=t, W=t)}{P(w=t)} \approx \frac{Count(W=t, C=t)}{Count(W=t)ß}$
+Conditionals: $P(C=t | W=t) = \frac{P(C=t, W=t)}{P(w=t)} \approx \frac{Count(W=t, C=t)}{Count(W=t)}$
 
 \textbf{Rejection Sampling}
 "Normaler Wuerfel nehmen um Verteilung von 1..5 zu samplen, 6 wir jeweils ignoriert"
@@ -393,7 +403,6 @@ How should we control the robot to maximize reward?
 	\item A set of actions $A={1,...,m}$
 	\item Transition probabilities $P(x' | x, a)$ = Prob(Next state = $x' |$ Action $a$ in state $x$)
 	\item A reward function r(x, a, x')
-	
 	Modes: Finite horizon ($T timesteps$) or Discounted rewards (inf timesteps but discount future rewards)
 \end{compactitem}
 
@@ -402,47 +411,47 @@ Deterministic (fixed) policy $\pi: X \rightarrow A$
 
 Value of policy: 
 
-$V^\pi(x)$ $= J(\pi | X_0 = x) $$= \mathds{E}[\sum_{t=0}^{\infty} \gamma^t r(X_t, \pi(X_t)) | X_0 = x] $
+$V_\pi(x)$ $= J(\pi | X_0 = x) $$= \mathds{E}[\sum_{t=0}^{\infty} \gamma^t r(X_t, \pi(X_t)) | X_0 = x] $
 
-$= r(x, \pi(x)) + \gamma \sum_{x'} P(x' | x, \pi(x)) V^\pi(x')$
+$= r(x, \pi(x)) + \gamma \sum_{x'} P(x' | x, \pi(x)) V_\pi(x')$
 
-Can compute $V\pi$ exactly by solving linear system! 
+Can compute $V_\pi$ exactly by solving linear system! 
 
-\textbf{Value functions and policies}
-
+\paragraph{Value functions and policies}
 
 \includegraphics[height=3.5cm]{img/pai5.png}
 
-\textbf{Policy iteration}
+\paragraph{Policy iteration}
 \begin{compactitem}
 	\item Start with an arbitrary (e.g., random) policy $\pi$
 	\item Until converged do:
-	\item Compute value function $V^\pi(x)$
-	\item Compute greedy policy $\pi_G$ w.r.t. $V^\pi$
+	\item Compute value function $V_\pi(x)$
+	\item Compute greedy policy $\pi_G$ w.r.t. $V_\pi$
 	\item Set $\pi \leftarrow \pi_G$
 \end{compactitem}
 
 Guaranteed to monotonically improve \& converge to an optimal policy.
 
-\textbf{Value iteration}
+\paragraph{Value iteration}
 \begin{compactitem}
 \item Initialize $V_0(x) = \max_a r(x, a)$
 \item For $t=1$ to $\infty$ 
-\item For each $x, a$, let $Q^t(x,a) = r(x, a) + \gamma \sum_{x'} P(x' | x, a) V^{t-1}(x'))$
-\item For each x let $V^t(x) = \max_a Q^t(x,a)$
-\item Break if $max_x V^t(x) - V^{t-1}(x) < \epsilon$
+\item For each $x, a$, let $Q^t(x,a) = r(x, a) + \gamma \sum_{x'} P(x' | x, a) V_{t-1}(x'))$
+\item For each x let $V_t(x) = \max_a Q^t(x,a)$
+\item Break if $max_x V_t(x) - V_{t-1}(x) < \epsilon$
 \item Then choose greedy policy w.r.t. $V_t$
 \end{compactitem}
 
 Guaranteed to converge to $\epsilon$-optimal policy!
 
-\textbf{Tradeoffs: Value vs Policy Iteration}
-Policy iteration: Finds exact solution in polynomial \# iterations. Complexity per iteration: $O(n^3)$
-Value iteration: Finds ε-optimal solution in polynomial \# iterations. Complexity per iteration: $O(n\cdot m \cdot a)$
+\paragraph{Runtime trade-off}
+\subparagraph{Policy iteration}
+Finds exact solution in polynomial \# iterations. Complexity per iteration: $O(n^3)$
+\subparagraph{Value iteration}
+Finds $\epsilon$-optimal solution in polynomial \# iterations. Complexity per iteration: $O(n\cdot m \cdot a)$
 
-\textbf{Partially Observable MDP (POMDP)}
+\paragraph{Partially Observable MDP (POMDP)} ``controlled HMM''
 
-"controlled HMM"
 Key idea: Interpret POMDP as an MDP with enlarged state space: New states correspond to beliefs $P(X_t | y_{1:t})$ in the original POMDP
 TODO: Belief-state MDP / Policy gradient methods ??
 
@@ -535,7 +544,7 @@ Depends heavily on state space $O(|x|^3)$
 \subsubsection{Model-free RL}
 Estimate the value function directly.
 
-\textbf{Q-Learning}
+\paragraph{Q-Learning}
 $Q^*(x, a) = r(x, a) + \gamma \cdot \max_{a'} (Q^*(x', a'))$ where $\gamma$ is discount factor. $\pi(x) = \argmax_a Q(x, a )$
 
 Learning Algorithm:
@@ -551,18 +560,17 @@ Learning Algorithm:
 
 Depends on action space $O(|a|)$
 
-
-\textbf{Monte Carlo Tree Search (MCTS)}
+\paragraph{Monte Carlo Tree Search (MCTS)}
 Action selection planning
 Simulate to terminal state observe reward and then propagate back result. Tree policies: epsilon greedy, random. Stop after sufficient runs or time budget.
 
-\textbf{Gradient Based Optimzation}
+\paragraph{Gradient Based Optimzation}
 Objective Function: Mean Squared Value Error
-Parameterize $V^\pi$ \& use SDG:
-$\theta_{t+1} = \theta_{t} - \frac{1}{2}\cdot\alpha\nabla(V^\pi(s_t) - \hat{V}(s_t; \theta ))^2$
-Can use Monte Carlo Estimate as surrogate for $V^\pi(s_t)$
+Parameterize $V_\pi$ \& use SDG:
+$\theta_{t+1} = \theta_{t} - \frac{1}{2}\cdot\alpha\nabla(V_\pi(s_t) - \hat{V}(s_t; \theta ))^2$
+Can use Monte Carlo Estimate as surrogate for $V_\pi(s_t)$
 
-\textbf{Policy Gradient Method}
+\paragraph{Policy Gradient Method}
 Learning a parameterized policy without the detour of learning a value function: $\pi(b) = \pi(b;\theta)$ \& again GD
 
 \end{multicols*}
