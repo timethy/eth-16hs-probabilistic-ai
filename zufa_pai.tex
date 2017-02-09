@@ -96,17 +96,17 @@
 			\item[] $\uP(A\cup B)=\uP(A)+\uP(B)-{{\uP(A\cap B)}}$
 			\item[] Chain rule $\uP (X_{1},.,X_{n})=\uP(X_{1})\,\uP(X_{2}| X_{1})\,\uP(X_{3}| X_{1},X_{2}) \cdots \uP(X_{n} | X_{1},.,X_{n-1})$
 			\item[] Marginalization: $ \uP(X=x)=\sum _{y}\uP(X=x,Y=y)=\sum _{y}\uP(X=x\mid Y=y)\uP(Y=y)$
-			\item[] Conditional independence: $X$ \& $Y$ are c.\ ind.\ given $Z$: $\uP(X, Y| Z) = \uP(X|Z) \uP(Y|Z)$ if $\uP(Y|Z) > 0$ that is equivalent to $\uP(X|Z,Y) = \uP(X | Z)$
+			\item[] Conditional independence: $X \perp Y | Z$: $\uP(X, Y| Z) = \uP(X|Z) \uP(Y|Z)$ if $\uP(Y|Z) > 0$ that is equivalent to $\uP(X|Z,Y) = \uP(X | Z)$
 		\end{compactitem}
 	
 	
 		\section{Bayes Network}
 		\textbf{Naive Bayes approach:} Effects are conditionally independent given a cause.
 		
-		\textbf{Bayesian network $(G,P)$:} directed, acyclic graph and a set of conditional probability distributions (CPTs) $\uP(X_s| Pa_{X_{s}})$
+		\textbf{Bayesian network $(G,P)$:} DAG and a set of conditional probability distributions (CPTs) $\uP(X_s| Pa_{X_{s}})$
 		
 		 $(G,P)$ defines the joint distribution $\mathrm {P} (X_{1:n}) = \prod_{i} P(X_i| Pa_{X_{i}})$  
-		\includegraphics[height=2cm]{img/pai1.png}
+		\includegraphics[height=1.5cm]{img/pai1.png}
 		 
 		\textbf{Specifying a BN}
 		\begin{compactitem}
@@ -130,7 +130,7 @@
 	
 		Any variables $X$ and $Y$ for which there is no active trail for observations $Z$ are called d‐separated by $Z$. 
 		
-		$d$-$sep(X;Y | Z) \Rightarrow X \perp Y | Z$
+		$d$-$sep(X;Y | Z) \Rightarrow X \perp Y | Z$ (Converse must not hold!)
 		
 		\section{Inference}
 		\textbf{Typical Queries:} Conditional Distribution, MPE ($\argmax_{e,b,a} P(e,b,a | J=t, M = f)$), MAP ($\argmax_{e} P(e | J=t, M = f)$)
@@ -153,8 +153,7 @@
 		\item  Renormalize $P(q,e)$ to get $P(q | e)$ = $\dfrac{1}{\sum_{q}P(q,e)}P(q,e)$
 		
 	\end{compactitem}
-	
-	\textbf{Example:} TODO
+
 		
 	\textbf{Variable Elimination for Polytrees}
 	
@@ -162,7 +161,7 @@
 	\begin{compactitem}
 		\item Pick root
 		\item Orient edges towards the root
-		\item Eliminate in topological ordering (descendants for parents)
+		\item Eliminate in topological ordering (descendants before parents)
 	\end{compactitem}
 
 	Cutset Extension??
@@ -186,15 +185,17 @@
 			
 			Messages from factor u to variable v:
 			
-			$\mu_{u \rightarrow v}(x_v) = \sum_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu_{v' \rightarrow u}(x_{v'})$ 
+			$\mu_{u \rightarrow v}(x_v) = \sum_{v* \in V_u \setminus } f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu_{v' \rightarrow u}(x_{v'})$ 
 
 			\item Break once all messages change by at most $\epsilon$
 		\end{compactenum}
 	\end{compactitem}
 
-	\textbf{Example:} TODO
+	Intention: $P(X_v = x_v) \propto \prod_{u \in N(v)} \mu_{u \rightarrow v} (x_v)$
+	
+	$P(X_u = x_u) \propto f_u(x_u) \prod_{v \in N(u)} \mu_{v \rightarrow u} (x_u)$
 
-	\textbf{Belief Propagation on Trees}
+	\textbf{Belief Propagation on Trees (always converges)}
 	\begin{compactitem}
 		\item Factor graph of polytree is a tree!
 		\item Choose one node as root
@@ -281,8 +282,6 @@ Ergodic: if there exists a finite $t$ such that every state can be reached from 
 Sample $x_1~P(X_1)$, Sample $x_2~P(X_2 | X_1=x_1)$,..., Sample $x_N~P(X_N | X_{N-1}=x_{N-1})$.
 If simulated “sufficiently long”, sample $X_N$ is drawn from a distribution “very close” to stationary distribution $\pi$.
 
-\textbf{Markov Chain Monte Carlo (MCMC)}
-TODO: Slide 6 P29- 32
 
 \textbf{Gibbs Sampling: Random Order}
 \begin{compactitem}
@@ -295,7 +294,7 @@ TODO: Slide 6 P29- 32
 \item Update $x_i$ by sampling from $P(X_i | v_i)$
 \end{compactenum}
 \end{compactitem}
-Satisfies detailed balance equation!
+Satisfies detailed balance equation! For unnormalized $Q$  $\forall x, x': \frac{1}{Z} Q(x)P(x'|x) = \frac{1}{Z} Q(x')P(x|x') $ 
 
 \textbf{Gibbs Sampling: Practical Variant}
 \begin{compactitem}
@@ -339,10 +338,7 @@ Kalman Filters: $X_i, Y_i$ Gaussian distributions
 
 \textbf{Inference Tasks}
 
-Filtering: $P(X_t | y_{1:t} ) $\\
-Prediction: $P(X_{t+T} | y_{1:t} )$ \\
-Smoothing: $P(X_t | y_{1:T}) \text{ for } 1\leq t < T$\\
-MPE: $\argmax_{X_{1:T}} P(X_{1:T} | y_{1:T})$
+Filtering: $P(X_t | y_{1:t} ) $; Prediction: $P(X_{t+T} | y_{1:t} )$ ; Smoothing: $P(X_t | y_{1:T}) \text{ for } 1\leq t < T$ ; MPE: $\argmax_{X_{1:T}} P(X_{1:T} | y_{1:T})$
  
 In principle, can use variable elimination / belief propagation with new variables Xt, Yt at
 each time step. Problem need to rerun every time, complexity grows with time!
@@ -359,8 +355,6 @@ Suppose we already have computed $P(X_t | y_{1,...,t})$ now want to efficiently 
 \end{compactitem}
 Computation is recursive (cost independent of t)!
 
-\textbf{Kalman Filtering}
-TODO: ???
 
 \textbf{Dynamic Bayesian Networks}
 If we have more than one variable at each time step
@@ -377,8 +371,8 @@ Approximate the posterior at each time by samples (particles), which are propaga
 True distribution (possibly continuous): $P(x)$, $N$ i.i.d. samples: $x_1,..x_N$; Represent: $P(x) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i}(x)$. E.g. $\delta_{x_i}(x):= x_i == x$
 
 \begin{compactitem}
-	\item Suppose $P(X_t | y_{1:t}) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i, t}$
-	\item Prediction: Propagate each particle: $x'_i \sim P(X_{t+1} | x_{i,t})$
+	\item Suppose $P(X_t | y_{1:t}) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i, t}$ (measurement)
+	\item Prediction: Propagate each particle: $x'_i \sim P(X_{t+1} | x_{i,t})$ (movement)
 	\item Conditioning: Weigh particles: $w_i = \frac{1}{Z}P(y_{t+1} | x'_i)$
 	\item Conditioning: Resample $N$ particles: $x_{i, t+1} \sim \frac{1}{N} \sum_{i=1}^{N} w_i\delta_{x'_i}$ 
 \end{compactitem}
@@ -444,7 +438,6 @@ Value iteration: Finds ε-optimal solution in polynomial \# iterations. Complexi
 
 "controlled HMM"
 Key idea: Interpret POMDP as an MDP with enlarged state space: New states correspond to beliefs $P(X_t | y_{1:t})$ in the original POMDP
-TODO: Belief-state MDP / Policy gradient methods ??
 
 \section{Learning BN}
 Learn from i.i.d. data: 1.) Learning structure (conditional independencies) 2.) Learning parameters (CPDs)
