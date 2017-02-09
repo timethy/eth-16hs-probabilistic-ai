@@ -1,4 +1,4 @@
-\documentclass[a4paper, 11pt]{scrartcl}
+\documentclass[a4paper, 10pt]{scrartcl}
 
 \usepackage{mathptmx} % more compact font
 \usepackage[utf8]{inputenc}
@@ -43,6 +43,10 @@
 \titlespacing*{\subsubsection}{0pt}{0em}{0em}
 \titlespacing*{\paragraph}{0pt}{0em}{5pt}
 \titlespacing*{\subparagraph}{0pt}{0em}{4pt}
+
+\newenvironment{talign*}
+ {\let\displaystyle\textstyle\csname align*\endcsname}
+ {\endalign}
 
 % coloured section headings for easier read
 \titleformat{name=\section}[block]
@@ -100,67 +104,54 @@
 		
 		\defaultleftmargin{}{}{}{} 
 		\section{Probabilities}
-		\begin{compactitem}[]
-			\item[] Bayes: $\uP(A\mid B) \; = \; \frac {\uP(B\mid A) \cdot \uP(A)} {\uP(B)} = \frac{\uP(A\cap B)}{\uP(B)}$
-			\item[] $\uP(A\cap B) = \uP(A|B)\uP(B) = \uP(B|A)\uP(A)$
-			\item[] $\uP(A\cup B)=\uP(A)+\uP(B)-{{\uP(A\cap B)}}$
-			\item[] Chain rule $\uP (X_{1},.,X_{n})=\uP(X_{1})\,\uP(X_{2}| X_{1})\,\uP(X_{3}| X_{1},X_{2}) \cdots \uP(X_{n} | X_{1},.,X_{n-1})$
-			\item[] Marginalization: $ \uP(X=x)=\sum _{y}\uP(X=x,Y=y)=\sum _{y}\uP(X=x\mid Y=y)\uP(Y=y)$
-			\item[] Conditional independence: $X$ \& $Y$ are c.\ ind.\ given $Z$: $\uP(X, Y| Z) = \uP(X|Z) \uP(Y|Z)$ if $\uP(Y|Z) > 0$ that is equivalent to $\uP(X|Z,Y) = \uP(X | Z)$
-		\end{compactitem}
-	
+		\begin{talign*}
+		\uP(A\mid B) & = \; \frac {\uP(B\mid A) \cdot \uP(A)} {\uP(B)} = \frac{\uP(A\cap B)}{\uP(B)} \\
+		\uP(A, B) & = \uP(A \cap B) = \uP(A|B)\uP(B) = \uP(B|A)\uP(A) \\
+		\uP(A\cup B) & =\uP(A)+\uP(B)-{{\uP(A\cap B)}} \\
+		\uP (X_{1},\dots,X_{n}) & = \uP(X_{1})\,\uP(X_{2}| X_{1})\,\uP(X_{3}| X_{1},X_{2})\,\cdots\,\uP(X_{n} | X_{1},\dots,X_{n-1}) \\
+		\uP(X,Y|Z) & = \uP(X|Y,Z)\uP(Y|Z) \\
+		\uP(X=x) & = \sum_{y}\uP(X=x,Y=y)=\sum _{y}\uP(X=x\mid Y=y)\uP(Y=y)
+		\end{talign*}
+		\emph{$X, Y$ conditional indepent given $Z$} iff $\uP(X, Y| Z) = \uP(X|Z) \uP(Y|Z)$. \\
+		If $\uP(Y|Z) > 0$ equivalent to $\uP(X|Z,Y) = \uP(X | Z)$
 	
 		\section{Bayes Network}
-		\textbf{Naive Bayes approach:} Effects are conditionally independent given a cause.
+		\paragraph{Naive Bayes} Effects are conditionally independent given a cause.
 		
-		\textbf{Bayesian network $(G,P)$:} directed, acyclic graph and a set of conditional probability distributions (CPTs) $\uP(X_s| Pa_{X_{s}})$
-		
-		 $(G,P)$ defines the joint distribution $\mathrm {P} (X_{1:n}) = \prod_{i} P(X_i| Pa_{X_{i}})$  
-		\includegraphics[height=2cm]{img/pai1.png}
+		\paragraph{Bayesian network $(G,P)$:} DAG with cond.\ prob.\ dist.\ $\uP(X_s| Pa_{X_{s}})$.
+		 $(G,P)$ defines joint distribution $\uP (X_{1:n}) = \prod_{i} \uP(X_i| Pa_{X_{i}})$  .
+%		\includegraphics[height=2cm]{img/pai1.png}
 		 
-		\textbf{Specifying a BN}
-		\begin{compactitem}
-			\item Given random variables and known c. i.
-			\item Pick ordering $X_1, \cdots, X_n$ of the variables
-			\item For each $X_i$
-			\begin{compactenum}
-				\item Find minimal subset $A$ of $\{X_1,...,X_{i-1}\}$ such that $X_i \perp X_{\bar{A}} | X_A$ where $\bar{A} = \{1,...,i-1\}$ "minimal edges from existing variables to new variable in regards to c.i."
-				\item Specify / learn $P(X_i|A)$
-			\end{compactenum}
-		\end{compactitem}
+		\paragraph{Specifying a BN}
+		Variables $X_1, \cdots, X_n$. Pick order. For all $i \in [n]$ find 1.\ minimal subset $A \subseteq \{X_1,\dots,X_{i-1}\}$ s.t.\ $X_i \perp X_{\bar A}|X_A$.
+		2.\ Specify/learn $\uP(X_i|A)$.
+		
 		BN defined this way are sound. Ordering matters a lot for compactness of representation!
 		
-		\textbf{Active Trails:}
-		\begin{compactitem}
-			\item  $X \rightarrow  Y \rightarrow Z$ \& $Y$ is unobserved
-			\item  $X \leftarrow  Y \leftarrow Z$ \& $Y$ is unobserved
-			\item  $X \leftarrow  Y \rightarrow Z$ \& $Y$ is unobserved
-			\item  $X \rightarrow  Y \leftarrow Z$ \& $Y$ or any of $Y's$ descendants is oberserved
-		\end{compactitem}
+		\paragraph{Active Trails}
+		Path is called \emph{active trail} from $X$ to $Y$ iff for all triples $A \rightarrow  B \rightarrow C$, $A \leftarrow  B \leftarrow C$,
+		$A \leftarrow  B \rightarrow C$, $B$ is unobserved and for $A \rightarrow  B \leftarrow C$ either $B$ or one of its descendants is observed.
 	
-		Any variables $X$ and $Y$ for which there is no active trail for observations $Z$ are called d‐separated by $Z$. 
-		
-		$d$-$sep(X;Y | Z) \Rightarrow X \perp Y | Z$
+		$X$ and $Y$ \emph{d-seperated by $Z$} iff no active trail exists with observations $Z$.
+		Implies c.i.: $\text{d-sep}(X;Y | Z) \Rightarrow X \perp Y | Z$.
 		
 		\section{Inference}
-		\textbf{Typical Queries:} Conditional Distribution, MPE ($\argmax_{e,b,a} P(e,b,a | J=t, M = f)$), MAP ($\argmax_{e} P(e | J=t, M = f)$)
+		\paragraph{Typical Queries} Conditional Distribution, MPE ($\argmax_{e,b,a} \uP(e,b,a | J=t, M = f)$), MAP ($\argmax_{e} \uP(e | J=t, M = f)$)
 		
 		\subsection{Exact Inference}
 		
-		\textbf{Variable Elimination}
-		
+		\paragraph{Variable Elimination}
 		\begin{compactitem}
-			
-		\item Given BN and Query $P(Q | E=e)$ ($E$ = evidence variables)
+		\item Given BN and Query $\uP(Q | E=e)$ ($E$ = evidence variables)
 		\item Choose an ordering of $X_1, ..., X_n$
-		\item Set up initial factors: $fi = P(X_i | P_{ai})$
+		\item Set up initial factors: $fi = \uP(X_i | P_{ai})$
 		\item For $i =1:n$, $X_i  \in X\setminus \{Q,E\}$
 		\begin{compactenum}
 			\item Collect and multiply all factors $f$ that include $X_i$  
 			\item Generate new factor by marginalizing out $X_i$
 			\item Add $g$ to set of factors, $g = \sum_{x_i}\prod_{j}f_j$
 		\end{compactenum}
-		\item  Renormalize $P(q,e)$ to get $P(q | e)$ = $\dfrac{1}{\sum_{q}P(q,e)}P(q,e)$
+		\item  Renormalize $\uP(q,e)$ to get $\uP(q | e)$ = $\frac{1}{\sum_{q}\uP(q,e)}\uP(q,e)$
 		
 	\end{compactitem}
 	
@@ -177,8 +168,8 @@
 
 	Cutset Extension??
 	
-	\textbf{Factor Graphs}
-	A factor graph for a BN is a bipartite graph with variables on one side and  factors on the other.
+	\paragraph{Factor Graph}
+	of BN is bipartite graph with variables on one side and factors on the other.
 	\includegraphics[height=2cm]{img/pai2.png}
 	
 	\textbf{Sum-Product / Belief Propagation Algorithm}	
@@ -215,7 +206,7 @@
 	\begin{compactitem}
 	\item Given BN and evidence $E=e$
 	\item Choose an ordering of $X_1, ...,X_n$
-	\item Set up initial factors: $f_i = P(X_i | Pa_i)$
+	\item Set up initial factors: $f_i = \uP(X_i | Pa_i)$
 	\item For $i=1:n, X_i \notin  E$
   	\begin{compactenum}
   	\item Collect and multiply all factors $f_j$ that include $X_i$   
@@ -227,20 +218,18 @@
 	\item For $i=n:-1:1, X_i \notin  E$:  $\hat{x_i} = \argmax_{x_i} g_i(x_i, \hat{x}_{i+1:n})$
 \end{compactitem}
 
-\textbf{Example: }
+\subparagraph{Example}
+\begin{talign*}
+  & \argmax_{e , b, a} \uP(e,b,a| J, M) = \argmax_{e, b, a} \bcancel{\frac{1}{Z}} \uP(e,b,a, J,M) \\
+= & \argmax_{e , b, a} \uP(e)\uP(b)\uP(a|e,b)\uP(J|a)\uP(M|a) \\
+= & \argmax_{a} \uP(J|a)\uP(M|a) \argmax_{e} \uP(e) \argmax_{b} \uP(b)\uP(a|e,b)
+\end{talign*}
+\begin{talign*}
+a^{*} = &\argmax_{a} P(J|a)P(M|a) g_e(a) \\
+e^{*} = &\argmax_{e} P(J|a^*)P(M|a^*) P(e) g_b(a^*,e)
+\end{talign*}
 
-$\argmax_{e , b, a} P(e,b,a| J, M) = \argmax_{e , b, a} \bcancel{\frac{1}{Z}} P(e,b,a, J,M)$
-
-$= \argmax_{e , b, a} P(e)P(b)P(a|e,b)P(J|a)P(M|a)$
-
-$= \argmax_{a} P(J|a)P(M|a)  \argmax_{e} P(e)  \argmax_{b} P(b)P(a|e,b)$
-
-$a^{*} = \argmax_{a} P(J|a)P(M|a) g_e(a)$
-
-$e^{*} = \argmax_{e} P(J|a^*)P(M|a^*) P(e) g_b(a^*,e)$
-
-
-\textbf{Max-product Message Passing on Factor Graphs}
+\paragraph{Max-product Message Passing on Factor Graphs}
 
 Messages from variable v to factor u: 
 
@@ -274,22 +263,22 @@ Marginals: $P(w=t) \approx \frac{1}{N} \sum_{i=1}^{N}[w=t](x^{(i)} =\frac{ Count
 Conditionals: $P(C=t | W=t) = \frac{P(C=t, W=t)}{P(w=t)} \approx \frac{Count(W=t, C=t)}{Count(W=t)}$
 
 \textbf{Rejection Sampling}
-"Normaler Wuerfel nehmen um Verteilung von 1..5 zu samplen, 6 wir jeweils ignoriert"
+``Normalen Würfel nehmen um Verteilung von 1..5 zu samplen, 6 wird jeweils ignoriert''
 
 $\hat{P}(X_A = x_A | X_B = x_B) \approx \frac{Count(x_a, x_B)}{Count(x_B)}$
 
-Trow away samples that disagree with $x_B$, can be problematic if $x_B$ is a rare event. 
+Throw away samples that disagree with $x_B$ problematic if $x_B$ is a rare event.
 
-\textbf{Markov Chain}
+\paragraph{Markov Chain}
 
-A (stationary) Markov chain is a sequence of RVs, $X_1,...,X_N$ with Prior $P(X_1)$ \& transition probabilities $P(X_{t+1} | X_t)$ independent of $t$.
+A Markov chain is sequence of RVs, $X_1,\dots,X_N$ with \emph{Prior} $\uP(X_1)$ \& \emph{transition probabilities} $\uP(X_{t+1} | X_t)$ independent of $t$.
 
+\subparagraph{Ergodic} $\exists t\in{\mathbb N}$ s.t. every state is reachable from every state in exactly $t$ steps.
+Then it has unique, positive, stationary distribution.
 
-Ergodic: if there exists a finite $t$ such that every state can be reached from every state in exactly $t$ steps. Ergodic MC has a unique \& positive stationary distribution.
-
-\textbf{Sampling from MC}
-Sample $x_1~P(X_1)$, Sample $x_2~P(X_2 | X_1=x_1)$,..., Sample $x_N~P(X_N | X_{N-1}=x_{N-1})$.
-If simulated “sufficiently long”, sample $X_N$ is drawn from a distribution “very close” to stationary distribution $\pi$.
+\paragraph{Sampling from MC}
+Sample $x_1 \sim \uP(X_1), x_2 \sim \uP(X_2 | X_1=x_1), \dots, x_N \sim \uP(X_N | X_{N-1}=x_{N-1})$.
+If simulated “sufficiently long”, sample $X_N$ is drawn “very close” to the stationary dist.\ $\pi$.
 
 \textbf{Markov Chain Monte Carlo (MCMC)}
 TODO: Slide 6 P29- 32
@@ -302,7 +291,7 @@ TODO: Slide 6 P29- 32
 \begin{compactenum}
 \item Pick a variable $i$ uniformly at random from $\{1,..,n\} \setminus B$
 \item Set $v_i = $values of all $x$ except $x_i$
-\item Update $x_i$ by sampling from $P(X_i | v_i)$
+\item Update $x_i$ by sampling from $\uP(X_i | v_i)$
 \end{compactenum}
 \end{compactitem}
 Satisfies detailed balance equation!
@@ -316,12 +305,12 @@ Satisfies detailed balance equation!
 \item Set $x^{(t)} = x^{(t-1)}$
 \item For each variable $X_i$ (except those in $B$) 
 \item Set $v_i =$ values of all $x^{(t)}$ except $x_i$
-\item Sample $x_i^{(t)}$ from $P(X_i | v_i)$
+\item Sample $x_i^{(t)}$ from $\uP(X_i | v_i)$
 \end{compactenum}
 \end{compactitem}
 No detailed balance, but also has correct stationary distribution.
 
-\includegraphics[height=2.5cm]{img/pai3.png}
+%\includegraphics[height=2.5cm]{img/pai3.png}
 
 \subsection{Temporal models}
 
@@ -331,24 +320,26 @@ Markov assumption: $x_{t+1} \perp x_{1:t-1} | x_t \forall t$
 
 Stationary asm.: $P(x_{t+1} = x | x_t = x') = P(x_{t'+1} | x_{t'} = x') \forall t, t'$
 
-Order: 2nd-order next state depend on last two states, k-order last k states. 
+k-order: Next state depend on last k states.
 
-\textbf{Prediction in Markov Chains}
+\paragraph{Prediction in Markov Chains}
+\begin{talign*}
+\uP(X_i | X_1 = x) &= \sum_{x'}\uP(X_i,X_{i-1} = x'|X_1 = x) \\
+ & = \sum_{x'}\uP(X_{i} | X_{i-1} = x', X_1 = x)\uP(X_{i-1} = x' | X_1 = x) \\
+ & = \sum_{x'}\uP(X_{i} | X_{i-1} = x')\uP(X_{i-1} = x' | X_1 = x) \\
+ & = f(\uP(X_{i-1}|X_1 = x)) = f^{i-1}(\uP(X_1 = x))
+\end{talign*}
 
-$P(X_3 | X_1 = x) = \sum_{X_2}P(X_3,X_2|X_1 = x) = \sum_{X_2}P(X_3 | X_2, X_1 = x)P(X_2 | X_1 = x) =  \sum_{X_2}P(X_3 | X_2)P(X_2 | X_1 = x) = f(P(X_2|X_1))$
-
-$P(X_4 | X_1 = x) = \sum_{X_3}P(X_4,X_3|X_1 = x) = \sum_{X_3}P(X_4 | X_3)P(X_3 | X_1 = x) = f(P(X_3|X_1)) = f(f(P(X_2 | X_1)))$
-
-\textbf{Hidden Markov Model/ Kalman Filters}
+\paragraph{Hidden Markov Model/ Kalman Filters}
 
 \includegraphics[height=1cm]{img/pai4.png}
-$X_1,...,X_T$: Unobserved (hidden) variables (called states) \\
-$Y_1,...,Y_T$: Observations \\
+
+$X_1,\dots,X_T$: Unobserved (hidden) variables (called states) \\
+$Y_1,\dots,Y_T$: Observations \\
 HMMs: $X_i$ categorical, $Y_i$ categorical (or arbitrary)\\
 Kalman Filters: $X_i, Y_i$ Gaussian distributions
 
-\textbf{Inference Tasks}
-
+\paragraph{Inference Tasks}
 Filtering: $P(X_t | y_{1:t} ) $\\
 Prediction: $P(X_{t+T} | y_{1:t} )$ \\
 Smoothing: $P(X_t | y_{1:T}) \text{ for } 1\leq t < T$\\
@@ -357,8 +348,8 @@ MPE: $\argmax_{X_{1:T}} P(X_{1:T} | y_{1:T})$
 In principle, can use variable elimination / belief propagation with new variables Xt, Yt at
 each time step. Problem need to rerun every time, complexity grows with time!
 
-\textbf{Bayesian Filtering}
-Suppose we already have computed $P(X_t | y_{1,...,t})$ now want to efficiently compute $P(X_{t+1} | y_{1,...,t+1})$
+\paragraph{Bayesian Filtering}
+Suppose we already have computed $P(X_t | y_{1,\dots,t})$ now want to efficiently compute $P(X_{t+1} | y_{1,...,t+1})$
 
 \begin{compactitem}
 	\item Start with $P(X_1)$
@@ -369,20 +360,16 @@ Suppose we already have computed $P(X_t | y_{1,...,t})$ now want to efficiently 
 \end{compactitem}
 Computation is recursive (cost independent of t)!
 
-\textbf{Kalman Filtering}
-TODO: ???
-
-\textbf{Dynamic Bayesian Networks}
+\paragraph{Dynamic Bayesian Networks}
 If we have more than one variable at each time step
 \begin{compactitem}
 	\item At every timestep have a replicated BN
 	\item Variables at each time step $t$ called a slice $S_t$
-	\item “Temporal” edges connecting $S_{t+1}$ with $S_t$ (usually sharing parameters - stationarity)
+	\item ``Temporal'' edges connecting $S_{t+1}$ with $S_t$ (usually sharing parameters -- stationarity)
 	\item Can use standard approximate inference techniques (many loops) but high complexity over timesteps
 \end{compactitem}
 
-
-\textbf{Particle filtering}
+\paragraph{Particle filtering}
 Approximate the posterior at each time by samples (particles), which are propagated and reweighted over time.
 True distribution (possibly continuous): $P(x)$, $N$ i.i.d. samples: $x_1,..x_N$; Represent: $P(x) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i}(x)$. E.g. $\delta_{x_i}(x):= x_i == x$
 
@@ -396,59 +383,39 @@ True distribution (possibly continuous): $P(x)$, $N$ i.i.d. samples: $x_1,..x_N$
 \subsection{Probabilistic planning}
 How should we control the robot to maximize reward?
 
-\textbf{Markov Decision Processes (MDP)}
-"controlled Markov chain", an MDP is specified by:
-\begin{compactitem}
-	\item A set of states $X={1,...,n}$
-	\item A set of actions $A={1,...,m}$
-	\item Transition probabilities $P(x' | x, a)$ = Prob(Next state = $x' |$ Action $a$ in state $x$)
-	\item A reward function r(x, a, x')
-	Modes: Finite horizon ($T timesteps$) or Discounted rewards (inf timesteps but discount future rewards)
-\end{compactitem}
+\paragraph{Markov Decision Process (MDP)} -- ``controlled Markov chain'':
+States $X=\{1,...,n\}$, actions $A=\{1,...,m\}$, transition probabilities $\uP(x' | x, a) = \Pr[\text{next state } = x' | \text{Action } a \text{ in state } x)]$ and reward function $r(x,a)$.
 
-\textbf{Policy}
-Deterministic (fixed) policy $\pi: X \rightarrow A$
+\subparagraph{Modes} Finite horizon ($T$ timesteps) or discounted rewards ($\infty$ timesteps but discount factor $\gamma$).
 
-Value of policy: 
+\paragraph{Value of policy} deterministic (fixed) policy $\pi: X \rightarrow A$.
+\begin{talign*}
+V_\pi(x) & = J(\pi | X_0 = x) = \mathbb{E}[\sum_{t=0}^{\infty} \gamma^t r(X_t, \pi(X_t)) | X_0 = x] \\
+& = r(x, \pi(x)) + \gamma \sum_{x'} \uP(x' | x, \pi(x)) V_\pi(x')
+\end{talign*}
+Given $\pi$, compute $V_\pi$ exactly by solving linear system! 
 
-$V_\pi(x)$ $= J(\pi | X_0 = x) $$= \mathds{E}[\sum_{t=0}^{\infty} \gamma^t r(X_t, \pi(X_t)) | X_0 = x] $
-
-$= r(x, \pi(x)) + \gamma \sum_{x'} P(x' | x, \pi(x)) V_\pi(x')$
-
-Can compute $V_\pi$ exactly by solving linear system! 
-
-\paragraph{Value functions and policies}
-
-\includegraphics[height=3.5cm]{img/pai5.png}
-
+\paragraph{Bellmann Eq.} \ \\
+%\includegraphics[height=3.5cm]{img/pai5.png}
 \paragraph{Policy iteration}
-\begin{compactitem}
-	\item Start with an arbitrary (e.g., random) policy $\pi$
-	\item Until converged do:
-	\item Compute value function $V_\pi(x)$
-	\item Compute greedy policy $\pi_G$ w.r.t. $V_\pi$
-	\item Set $\pi \leftarrow \pi_G$
-\end{compactitem}
+Start with random (or smartly chosen) policy $\pi$.
+Until convergence: State value function $V_\pi(x) \forall x$, solve linear system.
+New policy is greedy policy $\pi \leftarrow \pi_G$ w.r.t.\ $V_\pi$.
 
-Guaranteed to monotonically improve \& converge to an optimal policy.
+Converged when $\pi = \pi_G$.
+Guaranteed to monotonically improve, thus converging to an optimal policy in poly.\ steps.
+Iteration: $O(n^3)$-time.
 
 \paragraph{Value iteration}
-\begin{compactitem}
-\item Initialize $V_0(x) = \max_a r(x, a)$
-\item For $t=1$ to $\infty$ 
-\item For each $x, a$, let $Q^t(x,a) = r(x, a) + \gamma \sum_{x'} P(x' | x, a) V_{t-1}(x'))$
-\item For each x let $V_t(x) = \max_a Q^t(x,a)$
-\item Break if $max_x V_t(x) - V_{t-1}(x) < \epsilon$
-\item Then choose greedy policy w.r.t. $V_t$
-\end{compactitem}
+Initialize $V_0(x) = \max_a r(x, a)$.
+In time step $t$ until convergence:
+\begin{talign*}
+Q^t(x,a) & = r(x, a) + \gamma \sum_{x'} \uP(x' | x, a) V_{t-1}(x'), \forall x,a \\
+V_t(x) & = \max_a Q^t(x,a), \forall x
+\end{talign*}
+Stop if $\max_x V_t(x) - V_{t-1}(x) < \epsilon$ else loop with greedy policy w.r.t.\ $V_t$.
 
-Guaranteed to converge to $\epsilon$-optimal policy!
-
-\paragraph{Runtime trade-off}
-\subparagraph{Policy iteration}
-Finds exact solution in polynomial \# iterations. Complexity per iteration: $O(n^3)$
-\subparagraph{Value iteration}
-Finds $\epsilon$-optimal solution in polynomial \# iterations. Complexity per iteration: $O(n\cdot m \cdot a)$
+Converges to $\epsilon$-optimal policy in polynomial steps. Iteration: $O(n\cdot m\cdot a)$-time.
 
 \paragraph{Partially Observable MDP (POMDP)} ``controlled HMM''
 
@@ -459,7 +426,6 @@ TODO: Belief-state MDP / Policy gradient methods ??
 Learn from i.i.d. data: 1.) Learning structure (conditional independencies) 2.) Learning parameters (CPDs)
 
 \subsection{Parameter learning} 
-
 $P(X_1, ..., X_N) = \prod_{i=1}^{n} P(X_i | Pa_i, {\theta}_{i | Pa_i})$
 
 Given:  BN structure $G$ \& Data set $D$ of complete observations
@@ -468,7 +434,6 @@ For each variable $X_i$ estimate: $\hat{\theta}_{X_i | Pa_i} = \frac{Count(X_i 
 We can also use a Beta prior (A priori knowledge).
 
 \subsection{Structure learning}
-
 Score based structure learning: scoring function S(G;D). Quantifies, for each structure G the fit to the data D. 
 
 $G^* = \argmax_G S(G;D)$
@@ -483,31 +448,32 @@ $\hat{P}(x_i, x_j) = \frac{Count(x_i, x_j)}{N}; \hat{I} = \sum_{x_i, x_j} \hat{P
 
 Problem: Optimal solution for MLE is always the fully  connected graph. 
 
-\textbf{Bayesian Information Criterion (BIC)}
-(Regularizing) $S_{BIC}(G) = \sum_{i=1}^{n} \hat{I}(X_i ; Pa_i) - \frac{\log N}{2N} |G|$ where $|G|$ is \# of parameters of G, n is \# of variables, N is \# of training examples
+\paragraph{Bayesian Information Criterion (BIC)}
+(Regularizing) $S_{BIC}(G) = \sum_{i=1}^{n} \hat{I}(X_i ; Pa_i) - \frac{\log N}{2N} |G|$ where $|G|$ is \# of parameters of G, n is \# of variables, N is \# of training examples.
 
-Haha this is now NP hard but find optimal tree-shaped BN is possible
+``Haha this is now NP hard but finding optimal tree-shaped BN is possible''
 
-\textbf{Chow-Liu algorithm}
+\paragraph{Chow-Liu algorithm}
+Given samples of $X_1,\dots,X_n$.
+Find BN with exactly one parent per variable.
+Gives opt.\ tree w.r.t.\ BIC.
 \begin{compactitem}
 	\item For each pair $X_i, X_j$ of variables compute $\hat{P}(x_i, x_j)$
-	\item Compute MI $\hat{I}(X_i, X_j)$
-	\item Define complete graph with weight of edge $(X_i,X_j)$ given by the MI
-	\item Find maximum spanning tree $\rightarrow$ undirected tree
-	\item Pick any variable as root and orient the edges away using bfs
-
+	\item Compute Mutual Information $\hat{I}(X_i, X_j)$
+	\item Take graph $K_n$, weight edge $(X_i,X_j) = \hat{I}(X_i, X_j)$
+	\item Find maximum spanning tree of graph $\rightarrow$ undirected tree
+	\item Pick any variable as root and orient the edges away using BFS
 \end{compactitem}
 
-
 \section{Reinforcement Learning}
-"Learn mapping from (seq. of) actions to rewards"
+``Learn mapping from (seq.\ of) actions to rewards''
 
 \subsection{Passive Reinforcement}
 Execute a set of trials in the environment using (fixed) policy  $\pi$
 Reduction to a supervised problem. But does not exploit that values of states are not independent! (Bellman)
 
 \subsection{Active Reinforcement Learning}
-We are not interested in a fixed policy, but need to decide which action to take in every state. Fundamental Dilemma: Exploration-Exploitation Dilemma in RL
+Not interested in fixed policy; need to decide action in every state. Fundamental Dilemma: Exploration-Exploitation.
 
 \begin{compactitem}
 	\item Always pick a random action - will eventually estimate all prob and rewards. May do extremely poorly. 
