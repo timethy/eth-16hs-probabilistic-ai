@@ -234,11 +234,11 @@ e^{*} = &\argmax_{e} P(J|a^*)P(M|a^*) P(e) g_b(a^*,e)
 
 Messages from variable v to factor u: 
 
-$\mu_{v \rightarrow u}(x_v) = \prod_{u' \in N(v) \setminus \{u\}} \mu_{u' \rightarrow v}(x_{v})$ 
+$\mu^{(t+1)}_{v \rightarrow u}(x_v) = \prod_{u' \in N(v) \setminus \{u\}} \mu^{(t)}_{u' \rightarrow v}(x_{v})$ 
 
 Messages from factor u to variable v:
 
-$\mu_{u \rightarrow v}(x_v) = \max_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu_{v' \rightarrow u}(x_{v'})$ 
+$\mu^{(t+1)}_{u \rightarrow v}(x_v) = \max_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu^{(t)}_{v' \rightarrow u}(x_{v'})$ 
  
  \textbf{Retrieving MAP From Max-Product}
  \begin{compactitem}
