@@ -466,8 +466,7 @@ $H(X_i) = -\sum_{x_i}\uP(x_i)\log\uP(x_i) = \mathbb{E}_{x_i}[-\log\uP(x_i)]$.
 \subparagraph{Properties of MI}
 $I(X_i; X_j) = 0$ iff $X_i, X_j$ independent. Symmetric.
 $I(X_A; X_B) = H(X_A) - H(X_A|X_B)$.
-
-$B \subseteq C \implies I(X_A; X_B) \leq I(X_A; X_C)$; proof: $I(X_A; X_B) = H(X_A)−H(X_A|X_B) \leq H(X_A)−H(X_A|X_C) = H(X_A)−H(X_A|X_C)=I(X_A;X_C)$
+$B \subseteq C \implies I(X_A; X_B) \leq I(X_A; X_C)$. %; proof: $I(X_A; X_B) = H(X_A) - H(X_A|X_B) \leq H(X_A) - H(X_A|X_C) = H(X_A)−H(X_A|X_C)=I(X_A;X_C)$
 
 \paragraph{Bayesian Information Criterion (BIC)}
 (Regularizing) $S_{BIC}(G) = \sum_{i=1}^{n} \hat{I}(X_i ; Pa_i) - \frac{\log N}{2N} |G|$ where $|G|$ is \# of parameters of G, n is \# of variables, N is \# of training examples.
