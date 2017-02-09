@@ -123,7 +123,7 @@
 %		\includegraphics[height=2cm]{img/pai1.png}
 
 		\paragraph{Specifying a BN}
-		Variables $X_1, \cdots, X_n$. Pick order. For all $i \in [n]$ find 1.\ minimal subset $A \subseteq \{X_1,\dots,X_{i-1}\}$ s.t.\ $X_i \perp X_{\bar A}|X_A$.
+		Variables $X_1, \cdots, X_n$. Pick order. For all $i \in [n]$ find 1.\ min.\ subset $A \subseteq \{X_1,\dots,X_{i-1}\}$ s.t.\ $X_i \perp X_{\bar A}|X_A$.
 		2.\ Specify/learn $\uP(X_i|A)$.
 
 		BN defined this way are sound. Ordering matters a lot for compactness of representation!
@@ -169,8 +169,6 @@
 		\item Eliminate in topological ordering (descendants before parents)
 	\end{compactitem}
 
-	Cutset Extension??
-	
 	\paragraph{Factor Graph}
 	of BN is bipartite graph with variables on one side and factors on the other.
 	\includegraphics[height=2cm]{img/pai2.png}
@@ -196,28 +194,26 @@
 		\end{compactenum}
 	\end{compactitem}
 
-	Intention: $P(X_v = x_v) \propto \prod_{u \in N(v)} \mu_{u \rightarrow v} (x_v)$
+	Intention: $\hat \uP(X_v = x_v) \propto \prod_{u \in N(v)} \mu_{u \rightarrow v} (x_v)$
 
-	$P(X_u = x_u) \propto f_u(x_u) \prod_{v \in N(u)} \mu_{v \rightarrow u} (x_u)$
+	$\hat \uP(X_u = x_u) \propto f_u(x_u) \prod_{v \in N(u)} \mu_{v \rightarrow u} (x_u)$
 
-	\paragraph{Belief Propagation on Trees (always converges)}
+	\paragraph{Belief Propagation on Trees (converges in two rounds)}
 	\begin{compactitem}
 		\item Factor graph of polytree is a tree!
 		\item Choose one node as root
 		\item Send messages from leaves to root, and from root to leaves
 	\end{compactitem}
    
-\textbf{Variable Elimination for MPE}	
+\paragraph{Variable Elimination for MPE}	
 	\begin{compactitem}
 	\item Given BN and evidence $E=e$
-	\item Choose an ordering of $X_1, ...,X_n$
+	\item Choose an ordering of $X_1,\dots,X_n$
 	\item Set up initial factors: $f_i = \uP(X_i | Pa_i)$
 	\item For $i=1:n, X_i \notin  E$
   	\begin{compactenum}
   	\item Collect and multiply all factors $f_j$ that include $X_i$   
-  	\item Generate new factor by maximizing out $X_i$
-  	
-	$g_i = \max_{x_i} \prod_{j} f_j$
+  	\item Generate new factor by maximizing out $X_i, g_i = \max_{x_i} \prod_{j} f_j$
   	\item Add $g$ to set of factors
   	\end{compactenum}
 	\item For $i=n:-1:1, X_i \notin  E$:  $\hat{x_i} = \argmax_{x_i} g_i(x_i, \hat{x}_{i+1:n})$
@@ -313,6 +309,8 @@ Satisfies detailed balance equation! For unnormalized $Q$  $\forall x, x': \frac
 \end{compactitem}
 No detailed balance, but also has correct stationary distribution.
 
+\subparagraph{Ex.\ for Michi} $\uP(C|S,R,W=1) = \frac{\uP(C,S,R,W=1)}{\sum_{c'}\uP(C = c', S, R, W = 1)}$.
+
 %\includegraphics[height=2.5cm]{img/pai3.png}
 
 \subsection{Temporal models}
@@ -372,7 +370,7 @@ If we have more than one variable at each time step
 
 \paragraph{Particle filtering}
 Approximate the posterior at each time by samples (particles), which are propagated and reweighted over time.
-True distribution (possibly continuous): $P(x)$, $N$ i.i.d. samples: $x_1,..x_N$; Represent: $P(x) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i}(x)$. E.g. $\delta_{x_i}(x):= x_i == x$
+True distribution (possibly continuous): $P(x)$, $N$ i.i.d. samples: $x_1,..x_N$; Represent: $P(x) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i}(x)$. E.g. $\delta_{x_i}(x):= x_i = x$
 
 \begin{compactitem}
 	\item Suppose $P(X_t | y_{1:t}) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i, t}$ (measurement)
@@ -392,11 +390,21 @@ States $X=\{1,...,n\}$, actions $A=\{1,...,m\}$, transition probabilities $\uP(x
 \paragraph{Value of policy} deterministic (fixed) policy $\pi: X \rightarrow A$.
 \begin{talign*}
 V_\pi(x) & = J(\pi | X_0 = x) = \mathbb{E}[\sum_{t=0}^{\infty} \gamma^t r(X_t, \pi(X_t)) | X_0 = x] \\
-& = r(x, \pi(x)) + \gamma \sum_{x'} \uP(x' | x, \pi(x)) V_\pi(x')
+         & = \sum_{x'}\uP(x'|x,\pi(x))[r(x,\pi(x),x')+\gamma V_\pi(x')]. \\
+         & = r(x, \pi(x)) + \gamma \sum_{x'} \uP(x' | x, \pi(x)) V_\pi(x')
 \end{talign*}
 Given $\pi$, compute $V_\pi$ exactly by solving linear system!
 
-\paragraph{Bellmann Eq.} \ \\
+\paragraph{Greedy policy}
+\begin{talign*}
+\pi_g(x) & = \argmax_a\sum_{x'}\uP(x'|x,a)\left(r(x,a,x')+\gamma V_\pi(x')\right) \\
+         & = \argmax_a r(x,a) + \gamma\sum_{x'}\uP(x'|x,\pi(x))V_\pi(x')).
+\end{talign*}
+
+\paragraph{Bellmann Eq.}
+Policy opt.\ $\iff$ greedy w.r.t.\ its induced value function. \\
+$V^*(x) = \max_a\left[ r(x,a) + \gamma\sum_{x'}\uP(x'|x,a)V^*(x')\right]$.
+
 %\includegraphics[height=3.5cm]{img/pai5.png}
 \paragraph{Policy iteration}
 Start with random (or smartly chosen) policy $\pi$.
@@ -492,11 +500,8 @@ Estimate rewards: $\hat{r}(X=x, A= a) = \frac{\sum_{t: x_t = x, a_t = a} r_t}{Co
 \textbf{ $\epsilon_t$ greedy}
 With probability  $\epsilon_t$: Pick random action; With probability $(1- \epsilon_t)$: Pick best action
 
-\textbf{$R_{max}$ Algorithm}
-
-Init:
-
-$r(x, a)$ = $R_{max}$
+\paragraph{$R_{max}$ Algorithm}
+Init: $r(x, a)$ = $R_{max}$.
 $P(x^* | x, a) = 1$ where $x^*$ is a “fairy tale” state: $r(x^*, a) = r_{max}  \forall a$
 Choose optimal $\pi$ according to $r$,$P$
 
