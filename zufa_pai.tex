@@ -447,17 +447,27 @@ We can also use a Beta prior (A priori knowledge).
 \subsection{Structure learning}
 Score based structure learning: scoring function S(G;D). Quantifies, for each structure G the fit to the data D. 
 
-$G^* = \argmax_G S(G;D)$
+$G^* = \argmax_G S(G;D)$; MLE: $S(G;D) = \max_\theta \log P(D | \theta, G)$
 
-Again use MLE: $S(G;D) = \max_\theta \log P(D | \theta, G)$
-$\log P(D | \theta_{G (MLE for G)}) = N \sum_{i=1}^{n} \hat{I}(X_i ; Pa_i) + const$
-
-Mutual Information: $I(X_i; X_j) = \sum_{x_i, x_j} P(x_i, x_j) \log \frac{P(x_i, x_j)}{P(x_i) P(x_j)}$
-Empirical MI: 
-
-$\hat{P}(x_i, x_j) = \frac{Count(x_i, x_j)}{N}; \hat{I} = \sum_{x_i, x_j} \hat{P}(x_i, x_j) \log \frac{\hat{P}(x_i, x_j)}{\hat{P}(x_i) \hat{P}(x_j)}$
+$\log P(D | \theta_{G \text{, MLE for G}}, G) = N \sum_{i=1}^{n} \hat{I}(X_i; Pa_i) + c$.
 
 Problem: Optimal solution for MLE is always the fully  connected graph. 
+
+\paragraph{Mutual Information (MI)}
+$I(X_i; X_j) = \sum_{X_i, X_j} \uP(X_i, X_j) \log \frac{\uP(x_i, x_j)}{\uP(x_i) \uP(x_j)} \geq 0$
+%(Def.\ analog.\ for sets $\mathbf{X}_A, \mathbf{X}_B$).
+
+\subparagraph{Empirical MI}
+$\hat{\uP}(X_i, X_j) = \frac{\#(X_i, X_j)}{N}$, $\hat I(X_i; X_j) = \sum_{x_i, x_j} \hat{\uP}(x_i, x_j) \log \frac{\hat{\uP}(x_i, x_j)}{\hat{\uP}(x_i) \hat{\uP}(x_j)}$
+
+\subparagraph{Entropy}
+$H(X_i) = -\sum_{x_i}\uP(x_i)\log\uP(x_i) = \mathbb{E}_{x_i}[-\log\uP(x_i)]$.
+
+\subparagraph{Properties of MI}
+$I(X_i; X_j) = 0$ iff $X_i, X_j$ independent. Symmetric.
+$I(X_A; X_B) = H(X_A) - H(X_A|X_B)$.
+
+$B \subseteq C \implies I(X_A; X_B) \leq I(X_A; X_C)$; proof: $I(X_A; X_B) = H(X_A)−H(X_A|X_B) \leq H(X_A)−H(X_A|X_C) = H(X_A)−H(X_A|X_C)=I(X_A;X_C)$
 
 \paragraph{Bayesian Information Criterion (BIC)}
 (Regularizing) $S_{BIC}(G) = \sum_{i=1}^{n} \hat{I}(X_i ; Pa_i) - \frac{\log N}{2N} |G|$ where $|G|$ is \# of parameters of G, n is \# of variables, N is \# of training examples.
