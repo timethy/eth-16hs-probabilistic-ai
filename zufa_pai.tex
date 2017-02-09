@@ -173,7 +173,7 @@
 	of BN is bipartite graph with variables on one side and factors on the other.
 	\includegraphics[height=2cm]{img/pai2.png}
 	
-	\textbf{Sum-Product / Belief Propagation Algorithm}	
+	\paragraph{Sum-Product / Belief Propagation Algorithm}	
 	
 	\begin{compactitem}
 		\item Initialize all messages as uniform distribution  
@@ -184,11 +184,11 @@
 			
 			Messages from variable v to factor u: 
 			
-			$\mu_{v \rightarrow u}(x_v) = \prod_{u' \in N(v) \setminus \{u\}} \mu_{u' \rightarrow v}(x_{v})$ 
+			$\mu^{(t+1)}_{v \rightarrow u}(x_v) = \prod_{u' \in N(v) \setminus \{u\}} \mu^{(t)}_{u' \rightarrow v}(x_{v})$ 
 			
 			Messages from factor u to variable v:
 			
-			$\mu_{u \rightarrow v}(x_v) = \sum_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu_{v' \rightarrow u}(x_{v'})$ 
+			$\mu^{(t+1)}_{u \rightarrow v}(x_v) = \sum_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu^{(t)}_{v' \rightarrow u}(x_{v'})$ 
 
 			\item Break once all messages change by at most $\epsilon$
 		\end{compactenum}
