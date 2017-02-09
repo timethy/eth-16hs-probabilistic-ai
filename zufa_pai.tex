@@ -234,11 +234,11 @@ e^{*} = &\argmax_{e} P(J|a^*)P(M|a^*) P(e) g_b(a^*,e)
 
 Messages from variable v to factor u: 
 
-$\mu_{v \rightarrow u} = \prod_{u' \in N(v) \setminus \{u\}} \mu_{u' \rightarrow v}(x_{v})$ 
+$\mu_{v \rightarrow u}(x_v) = \prod_{u' \in N(v) \setminus \{u\}} \mu_{u' \rightarrow v}(x_{v})$ 
 
 Messages from factor u to variable v:
 
-$\mu_{u \rightarrow v} = \max_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu_{v' \rightarrow u}(x_{v'})$ 
+$\mu_{u \rightarrow v}(x_v) = \max_{x_u \sim x_v} f_u(x_u) \prod_{v' \in N(u) \setminus \{v\}} \mu_{v' \rightarrow u}(x_{v'})$ 
  
  \textbf{Retrieving MAP From Max-Product}
  \begin{compactitem}
@@ -274,8 +274,11 @@ Throw away samples that disagree with $x_B$ problematic if $x_B$ is a rare event
 
 A Markov chain is sequence of RVs, $X_1,\dots,X_N$ with \emph{Prior} $\uP(X_1)$ \& \emph{transition probabilities} $\uP(X_{t+1} | X_t)$ independent of $t$.
 
-\subparagraph{Ergodic} $\exists t\in{\mathbb N}$ s.t. every state is reachable from every state in exactly $t$ steps.
+\subparagraph{Ergodic:} $\exists t\in{\mathbb N}$ s.t. every state is reachable from every state in exactly $t$ steps.
 Then it has unique, positive, stationary distribution.
+
+$\exists$ unique stat. $\pi(x)>0\ s.t.\ \forall x \lim\limits_{N\rightarrow\infty}\uP(X_N = x)=\pi(x)$ indep. of $\uP(X_1)$.
+\subparagraph{Ergodic Theorem:}$\lim\limits_{N\rightarrow\infty} \frac{1}{N}\sum_if(x_i)=\sum_{x\in D} \pi(x)f(x)$, where D finite state space.
 
 \paragraph{Sampling from MC}
 Sample $x_1 \sim \uP(X_1), x_2 \sim \uP(X_2 | X_1=x_1), \dots, x_N \sim \uP(X_N | X_{N-1}=x_{N-1})$.
@@ -354,7 +357,7 @@ Suppose we already have computed $P(X_t | y_{1,\dots,t})$ now want to efficientl
 	\item Start with $P(X_1)$
 	\item At time $t$ (Assume we have:  $P(X_t | y_{1,...,t-1})$
 	\item Conditioning: $P(X_t | y_{y1:t}) = \frac{1}{Z} P(X_t | y_{1:t-1})P(y_t | X_t)$
-	\item $Z= \sum P(x,y_t | y_{1:t-1})$ ???
+	\item $Z= \sum P(x,y_t | y_{1:t-1})$
 	\item Prediction: $P(X_{t+1} | y_{y1:t}) = \sum_{x_t}  P(X_t | y_{1:t}) P(X_{t+1} | x_t)$
 \end{compactitem}
 Computation is recursive (cost independent of t)!
@@ -546,4 +549,5 @@ Learning a parameterized policy without the detour of learning a value function:
 
 \end{multicols*}
 \end{document}
+
 
