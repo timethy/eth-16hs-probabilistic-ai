@@ -112,7 +112,7 @@
 		\uP(X,Y|Z) & = \uP(X|Y,Z)\uP(Y|Z) \\
 		\uP(X=x) & = \sum_{y}\uP(X=x,Y=y)=\sum _{y}\uP(X=x\mid Y=y)\uP(Y=y)
 		\end{talign*}
-		\emph{$X, Y$ conditional indepent given $Z$} iff $\uP(X, Y| Z) = \uP(X|Z) \uP(Y|Z)$. \\
+		Conditional independence: $X \perp Y | Z$ iff $\uP(X, Y| Z) = \uP(X|Z) \uP(Y|Z)$. \\
 		If $\uP(Y|Z) > 0$ equivalent to $\uP(X|Z,Y) = \uP(X | Z)$
 	
 		\section{Bayes Network}
@@ -121,16 +121,20 @@
 		\paragraph{Bayesian network $(G,P)$:} DAG with cond.\ prob.\ dist.\ $\uP(X_s| Pa_{X_{s}})$.
 		 $(G,P)$ defines joint distribution $\uP (X_{1:n}) = \prod_{i} \uP(X_i| Pa_{X_{i}})$  .
 %		\includegraphics[height=2cm]{img/pai1.png}
-		 
+
 		\paragraph{Specifying a BN}
 		Variables $X_1, \cdots, X_n$. Pick order. For all $i \in [n]$ find 1.\ minimal subset $A \subseteq \{X_1,\dots,X_{i-1}\}$ s.t.\ $X_i \perp X_{\bar A}|X_A$.
 		2.\ Specify/learn $\uP(X_i|A)$.
-		
+
 		BN defined this way are sound. Ordering matters a lot for compactness of representation!
 		
-		\paragraph{Active Trails}
-		Path is called \emph{active trail} from $X$ to $Y$ iff for all triples $A \rightarrow  B \rightarrow C$, $A \leftarrow  B \leftarrow C$,
-		$A \leftarrow  B \rightarrow C$, $B$ is unobserved and for $A \rightarrow  B \leftarrow C$ either $B$ or one of its descendants is observed.
+		\paragraph{Active Trails} If for all consecutive triplets $X, Y, Z$.
+		\begin{compactitem}
+			\item  $X \rightarrow  Y \rightarrow Z$ \& $Y$ is unobserved
+			\item  $X \leftarrow  Y \leftarrow Z$ \& $Y$ is unobserved
+			\item  $X \leftarrow  Y \rightarrow Z$ \& $Y$ is unobserved
+			\item  $X \rightarrow  Y \leftarrow Z$ \& $Y$ or any of $Y's$ descendants is oberserved
+		\end{compactitem}
 	
 		$X$ and $Y$ \emph{d-seperated by $Z$} iff no active trail exists with observations $Z$.
 		Implies c.i.: $\text{d-sep}(X;Y | Z) \Rightarrow X \perp Y | Z$.
@@ -154,8 +158,7 @@
 		\item  Renormalize $\uP(q,e)$ to get $\uP(q | e)$ = $\frac{1}{\sum_{q}\uP(q,e)}\uP(q,e)$
 		
 	\end{compactitem}
-	
-	\textbf{Example:} TODO
+
 		
 	\textbf{Variable Elimination for Polytrees}
 	
@@ -163,7 +166,7 @@
 	\begin{compactitem}
 		\item Pick root
 		\item Orient edges towards the root
-		\item Eliminate in topological ordering (descendants for parents)
+		\item Eliminate in topological ordering (descendants before parents)
 	\end{compactitem}
 
 	Cutset Extension??
@@ -193,9 +196,11 @@
 		\end{compactenum}
 	\end{compactitem}
 
-	\textbf{Example:} TODO
+	Intention: $P(X_v = x_v) \propto \prod_{u \in N(v)} \mu_{u \rightarrow v} (x_v)$
 
-	\textbf{Belief Propagation on Trees}
+	$P(X_u = x_u) \propto f_u(x_u) \prod_{v \in N(u)} \mu_{v \rightarrow u} (x_u)$
+
+	\paragraph{Belief Propagation on Trees (always converges)}
 	\begin{compactitem}
 		\item Factor graph of polytree is a tree!
 		\item Choose one node as root
@@ -280,8 +285,6 @@ Then it has unique, positive, stationary distribution.
 Sample $x_1 \sim \uP(X_1), x_2 \sim \uP(X_2 | X_1=x_1), \dots, x_N \sim \uP(X_N | X_{N-1}=x_{N-1})$.
 If simulated “sufficiently long”, sample $X_N$ is drawn “very close” to the stationary dist.\ $\pi$.
 
-\textbf{Markov Chain Monte Carlo (MCMC)}
-TODO: Slide 6 P29- 32
 
 \textbf{Gibbs Sampling: Random Order}
 \begin{compactitem}
@@ -294,7 +297,7 @@ TODO: Slide 6 P29- 32
 \item Update $x_i$ by sampling from $\uP(X_i | v_i)$
 \end{compactenum}
 \end{compactitem}
-Satisfies detailed balance equation!
+Satisfies detailed balance equation! For unnormalized $Q$  $\forall x, x': \frac{1}{Z} Q(x)P(x'|x) = \frac{1}{Z} Q(x')P(x|x') $
 
 \textbf{Gibbs Sampling: Practical Variant}
 \begin{compactitem}
@@ -340,11 +343,9 @@ HMMs: $X_i$ categorical, $Y_i$ categorical (or arbitrary)\\
 Kalman Filters: $X_i, Y_i$ Gaussian distributions
 
 \paragraph{Inference Tasks}
-Filtering: $P(X_t | y_{1:t} ) $\\
-Prediction: $P(X_{t+T} | y_{1:t} )$ \\
-Smoothing: $P(X_t | y_{1:T}) \text{ for } 1\leq t < T$\\
-MPE: $\argmax_{X_{1:T}} P(X_{1:T} | y_{1:T})$
- 
+
+Filtering: $P(X_t | y_{1:t} ) $; Prediction: $P(X_{t+T} | y_{1:t} )$ ; Smoothing: $P(X_t | y_{1:T}) \text{ for } 1\leq t < T$ ; MPE: $\argmax_{X_{1:T}} P(X_{1:T} | y_{1:T})$
+
 In principle, can use variable elimination / belief propagation with new variables Xt, Yt at
 each time step. Problem need to rerun every time, complexity grows with time!
 
@@ -374,8 +375,8 @@ Approximate the posterior at each time by samples (particles), which are propaga
 True distribution (possibly continuous): $P(x)$, $N$ i.i.d. samples: $x_1,..x_N$; Represent: $P(x) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i}(x)$. E.g. $\delta_{x_i}(x):= x_i == x$
 
 \begin{compactitem}
-	\item Suppose $P(X_t | y_{1:t}) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i, t}$
-	\item Prediction: Propagate each particle: $x'_i \sim P(X_{t+1} | x_{i,t})$
+	\item Suppose $P(X_t | y_{1:t}) \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x_i, t}$ (measurement)
+	\item Prediction: Propagate each particle: $x'_i \sim P(X_{t+1} | x_{i,t})$ (movement)
 	\item Conditioning: Weigh particles: $w_i = \frac{1}{Z}P(y_{t+1} | x'_i)$
 	\item Conditioning: Resample $N$ particles: $x_{i, t+1} \sim \frac{1}{N} \sum_{i=1}^{N} w_i\delta_{x'_i}$ 
 \end{compactitem}
@@ -393,7 +394,7 @@ States $X=\{1,...,n\}$, actions $A=\{1,...,m\}$, transition probabilities $\uP(x
 V_\pi(x) & = J(\pi | X_0 = x) = \mathbb{E}[\sum_{t=0}^{\infty} \gamma^t r(X_t, \pi(X_t)) | X_0 = x] \\
 & = r(x, \pi(x)) + \gamma \sum_{x'} \uP(x' | x, \pi(x)) V_\pi(x')
 \end{talign*}
-Given $\pi$, compute $V_\pi$ exactly by solving linear system! 
+Given $\pi$, compute $V_\pi$ exactly by solving linear system!
 
 \paragraph{Bellmann Eq.} \ \\
 %\includegraphics[height=3.5cm]{img/pai5.png}
@@ -420,12 +421,11 @@ Converges to $\epsilon$-optimal policy in polynomial steps. Iteration: $O(n\cdot
 \paragraph{Partially Observable MDP (POMDP)} ``controlled HMM''
 
 Key idea: Interpret POMDP as an MDP with enlarged state space: New states correspond to beliefs $P(X_t | y_{1:t})$ in the original POMDP
-TODO: Belief-state MDP / Policy gradient methods ??
 
 \section{Learning BN}
 Learn from i.i.d. data: 1.) Learning structure (conditional independencies) 2.) Learning parameters (CPDs)
 
-\subsection{Parameter learning} 
+\subsection{Parameter learning}
 $P(X_1, ..., X_N) = \prod_{i=1}^{n} P(X_i | Pa_i, {\theta}_{i | Pa_i})$
 
 Given:  BN structure $G$ \& Data set $D$ of complete observations
