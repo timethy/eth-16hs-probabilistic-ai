@@ -528,20 +528,21 @@ Depends heavily on state space $O(|x|^3)$
 Estimate the value function directly.
 
 \paragraph{Q-Learning}
-$Q^*(x, a) = r(x, a) + \gamma \cdot \max_{a'} (Q^*(x', a'))$ where $\gamma$ is discount factor. $\pi(x) = \argmax_a Q(x, a )$
+$Q^*(x, a) = r(x, a) + \gamma \cdot \max_{a'} (Q^*(x', a'))$; $\gamma$ is discount factor.
 
-Learning Algorithm:
+\subparagraph{Algorithm} Init Q matrix to zero (or R if \emph{optimistic}).
 \begin{compactitem}
-	\item Init Q matrix to zero
-	\item Select / Observe init state x
-	\item Do until end state reached:
-	\item Select $a$ according to policy (i.e. $\epsilon$-greedy)
-	\item Observe new state $x'$ and $r(x,a,x')$
-	\item $Q(x, a) \leftarrow (1-\alpha_t)Q(x, a)  + \alpha_t(r(x,a,x') + \gamma max_{a'}Q(x',a'))$
-	\item $x = x'$
+	\item Select/Observe init state $x$
+	\item Repeat until end state (restart after epoch):
+	\item Select $a$ according to policy (i.e. $\epsilon$-greedy, or $\pi(x) = \argmax_a Q(x, a)$).
+	\item Observe new state $x'$ and reward $r(x,a,x')$.
+	\item $Q^{(t+1)}(x, a) \leftarrow (1-\alpha_t)Q^{(t)}(x, a) + \alpha_t(r(x,a,x') + \gamma \max_{a'}Q^{(t)}(x',a'))$
+	\item $Q^{(t+1)}(x, a') \leftarrow Q^{(t)}(x, a') \forall a \neq a'$, remaining actions stay same.
+	\item $Q^{(t+1)}(x'', a') \leftarrow Q^{(t)}(x'', a') \forall x'' \neq x$, remaining states stay same.
+	\item $x \leftarrow x'$
 \end{compactitem}
 
-Depends on action space $O(|a|)$
+Depends on action space $O(|a|)$ (matrix size), i.e. iteration time is in $O(|a|)$.
 
 \paragraph{Monte Carlo Tree Search (MCTS)}
 Action selection planning
