@@ -426,9 +426,9 @@ In time step $t$ until convergence:
 Q^t(x,a) & = r(x, a) + \gamma \sum_{x'} \uP(x' | x, a) V_{t-1}(x'), \forall x,a \\
 V_t(x) & = \max_a Q^t(x,a), \forall x
 \end{talign*}
-Stop if $\max_x V_t(x) - V_{t-1}(x) < \epsilon$ else loop with greedy policy w.r.t.\ $V_t$.
+Stop if $\max_x |V_t(x) - V_{t-1}(x)| < \epsilon$ else loop with greedy policy w.r.t.\ $V_t$.
 
-Converges to $\epsilon$-optimal policy in polynomial steps. Iteration: $O(n\cdot m\cdot a)$-time.
+Converges to $\epsilon$-optimal policy in polynomial steps. Iteration: $O(n\cdot m\cdot a)$-time. Not monotonically increasing.
 
 \paragraph{Partially Observable MDP (POMDP)} ``controlled HMM''
 
@@ -443,7 +443,7 @@ $P(X_1, ..., X_N) = \prod_{i=1}^{n} P(X_i | Pa_i, {\theta}_{i | Pa_i})$
 Given:  BN structure $G$ \& Data set $D$ of complete observations
 For each variable $X_i$ estimate: $\hat{\theta}_{X_i | Pa_i} = \frac{Count(X_i , Pa_i)}{Count(Pa_i)}$ (MLE)
 
-We can also use a Beta prior (A priori knowledge).
+We can also use a Beta prior (A priori knowledge) or simple regularization.
 
 \subsection{Structure learning}
 Score based structure learning: scoring function S(G;D). Quantifies, for each structure G the fit to the data D. 
