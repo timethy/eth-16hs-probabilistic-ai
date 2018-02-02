@@ -260,7 +260,7 @@ Loopy belief propagation will in general not converge	$\rightarrow$ Sampling Bas
 
 \textbf{Computing Probabilities Through Sampling}
 
-Marginals: $P(w=t) \approx \frac{1}{N} \sum_{i=1}^{N}[w=t](x^{(i)} =\frac{ Count(w=t)}{N}$
+Marginals: $P(w=t) \approx \frac{1}{N} \sum_{i=1}^{N}[w=t]x^{(i)} =\frac{ Count(w=t)}{N}$
 
 Conditionals: $P(C=t | W=t) = \frac{P(C=t, W=t)}{P(w=t)} \approx \frac{Count(W=t, C=t)}{Count(W=t)}$
 
@@ -387,9 +387,9 @@ True distribution (possibly continuous): $P(x)$, $N$ i.i.d. samples: $x_1,..x_N$
 How should we control the robot to maximize reward?
 
 \paragraph{Markov Decision Process (MDP)} -- ``controlled Markov chain'':
-States $X=\{1,...,n\}$, actions $A=\{1,...,m\}$, transition probabilities $\uP(x' | x, a) = \Pr[\text{next state } = x' | \text{Action } a \text{ in state } x)]$ and reward function $r(x,a)$.
+States $X=\{1,...,n\}$, actions $A=\{1,...,m\}$, transition probabilities $\uP(x' | x, a) = \Pr[\text{next state } = x' | \text{Action } a \text{ in state } x)]$ and reward function $r(x,a, x')$.
 
-\subparagraph{Modes} Finite horizon ($T$ timesteps) or discounted rewards ($\infty$ timesteps but discount factor $\gamma$).
+\subparagraph{Modes} Finite horizon ($T$ timesteps) or discounted rewards ($\infty$ timesteps but discount factor $\gamma \in [0, 1)$).
 
 \paragraph{Value of policy} deterministic (fixed) policy $\pi: X \rightarrow A$.
 \begin{talign*}
