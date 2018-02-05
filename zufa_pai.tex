@@ -136,8 +136,9 @@
 			\item  $X \rightarrow  Y \leftarrow Z$ \& $Y$ or any of $Y's$ descendants is oberserved
 		\end{compactitem}
 	
-		$X$ and $Y$ \emph{d-seperated by $Z$} iff no active trail exists with observations $Z$.
-		Implies c.i.: $\text{d-sep}(X;Y | Z) \Rightarrow X \perp Y | Z$.
+		$A$ and $B$ \emph{d-seperated by $O$} iff no active trail exists with observations $O$.
+		Implies c.i.: $\text{d-sep}(A;B | O) \Rightarrow A \perp B | O$.
+		Algo for d-sep.: BFS
 		
 		\section{Inference}
 		\paragraph{Typical Queries} Conditional Distribution, MPE ($\argmax_{e,b,a} \uP(e,b,a | J=t, M = f)$), MAP ($\argmax_{e} \uP(e | J=t, M = f)$)
@@ -165,7 +166,7 @@
 	Polytree: A DAG is a polytree iff dropping edge directions results in a tree
 	\begin{compactitem}
 		\item Pick root
-		\item Orient edges towards the root
+		\item Orient edges towards the root (only in this algo, not in actual BN)
 		\item Eliminate in topological ordering (descendants before parents)
 	\end{compactitem}
 
@@ -259,7 +260,7 @@ Loopy belief propagation will in general not converge	$\rightarrow$ Sampling Bas
 
 \textbf{Computing Probabilities Through Sampling}
 
-Marginals: $P(w=t) \approx \frac{1}{N} \sum_{i=1}^{N}[w=t](x^{(i)} =\frac{ Count(w=t)}{N}$
+Marginals: $P(w=t) \approx \frac{1}{N} \sum_{i=1}^{N}[w=t]x^{(i)} =\frac{ Count(w=t)}{N}$
 
 Conditionals: $P(C=t | W=t) = \frac{P(C=t, W=t)}{P(w=t)} \approx \frac{Count(W=t, C=t)}{Count(W=t)}$
 
@@ -386,9 +387,9 @@ True distribution (possibly continuous): $P(x)$, $N$ i.i.d. samples: $x_1,..x_N$
 How should we control the robot to maximize reward?
 
 \paragraph{Markov Decision Process (MDP)} -- ``controlled Markov chain'':
-States $X=\{1,...,n\}$, actions $A=\{1,...,m\}$, transition probabilities $\uP(x' | x, a) = \Pr[\text{next state } = x' | \text{Action } a \text{ in state } x)]$ and reward function $r(x,a)$.
+States $X=\{1,...,n\}$, actions $A=\{1,...,m\}$, transition probabilities $\uP(x' | x, a) = \Pr[\text{next state } = x' | \text{Action } a \text{ in state } x)]$ and reward function $r(x,a, x')$.
 
-\subparagraph{Modes} Finite horizon ($T$ timesteps) or discounted rewards ($\infty$ timesteps but discount factor $\gamma$).
+\subparagraph{Modes} Finite horizon ($T$ timesteps) or discounted rewards ($\infty$ timesteps but discount factor $\gamma \in [0, 1)$).
 
 \paragraph{Value of policy} deterministic (fixed) policy $\pi: X \rightarrow A$.
 \begin{talign*}
@@ -425,9 +426,9 @@ In time step $t$ until convergence:
 Q^t(x,a) & = r(x, a) + \gamma \sum_{x'} \uP(x' | x, a) V_{t-1}(x'), \forall x,a \\
 V_t(x) & = \max_a Q^t(x,a), \forall x
 \end{talign*}
-Stop if $\max_x V_t(x) - V_{t-1}(x) < \epsilon$ else loop with greedy policy w.r.t.\ $V_t$.
+Stop if $\max_x |V_t(x) - V_{t-1}(x)| < \epsilon$ else loop with greedy policy w.r.t.\ $V_t$.
 
-Converges to $\epsilon$-optimal policy in polynomial steps. Iteration: $O(n\cdot m\cdot a)$-time.
+Converges to $\epsilon$-optimal policy in polynomial steps. Iteration: $O(n\cdot m\cdot a)$-time. Not monotonically increasing.
 
 \paragraph{Partially Observable MDP (POMDP)} ``controlled HMM''
 
@@ -442,7 +443,7 @@ $P(X_1, ..., X_N) = \prod_{i=1}^{n} P(X_i | Pa_i, {\theta}_{i | Pa_i})$
 Given:  BN structure $G$ \& Data set $D$ of complete observations
 For each variable $X_i$ estimate: $\hat{\theta}_{X_i | Pa_i} = \frac{Count(X_i , Pa_i)}{Count(Pa_i)}$ (MLE)
 
-We can also use a Beta prior (A priori knowledge).
+We can also use a Beta prior (A priori knowledge) or simple regularization.
 
 \subsection{Structure learning}
 Score based structure learning: scoring function S(G;D). Quantifies, for each structure G the fit to the data D. 
